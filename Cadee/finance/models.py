@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
 
@@ -28,7 +29,7 @@ class Transaction(models.Model):
     folder = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="transactions")
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     description = models.CharField(max_length=255)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
 
 #4 Purchase Goals (Analytics & Wants)
 class PurchaseGoal(models.Model):

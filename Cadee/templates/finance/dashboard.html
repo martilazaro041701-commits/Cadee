@@ -1,0 +1,235 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="app-shell">
+    <header class="dashboard-header">
+        <div class="hello-block">
+            <p class="hello-eyebrow">Hello {{ profile.full_name|default:request.user.username }},</p>
+            <h1>Welcome back!</h1>
+            <p class="hello-sub">Your folders are ready. Let’s keep today calm and clear.</p>
+        </div>
+        <div class="profile-card">
+            <img src="{% static 'assets/cadee_corgi.png' %}" alt="Profile avatar" class="profile-avatar">
+            <div>
+                <p class="profile-name">{{ profile.full_name|default:request.user.username }}</p>
+                <p class="profile-status">Cadee Companion</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="quick-row">
+        <button class="mini-folder-btn" type="button">
+            <span class="mini-folder-title">Any new transactions lately?</span>
+            <span class="mini-folder-cta">Add here</span>
+        </button>
+        <div class="total-savings-card">
+            <p class="total-label">Total Savings</p>
+            <h2 class="total-amount">{{ currency_symbol }} {{ total_savings|floatformat:2 }}</h2>
+            <p class="total-note">Updated today</p>
+        </div>
+    </section>
+
+    <section class="folder-stack">
+        <div class="folder-tabs">
+            <button class="folder-tab is-active" type="button" data-folder-target="transactions">Recent</button>
+            <button class="folder-tab" type="button" data-folder-target="limits">Limits</button>
+            <button class="folder-tab" type="button" data-folder-target="analysis">Analysis + Goals</button>
+        </div>
+
+        <div class="folder-views">
+            <article class="folder-card theme-mint is-active" data-folder="transactions">
+                <div class="folder-head">
+                    <div>
+                        <p class="folder-title">Recent Transactions</p>
+                        <p class="folder-subtitle">Last 5 entries</p>
+                    </div>
+                    <button class="folder-action" type="button">See all</button>
+                </div>
+                <div class="folder-body">
+                    <ul class="transaction-list">
+                        {% for txn in transactions %}
+                        <li>
+                            <div>
+                                <p class="transaction-title">{{ txn.description }}</p>
+                                <p class="transaction-meta">
+                                    {{ txn.date|date:"M d, Y" }}
+                                    {% if txn.folder %}· {{ txn.folder.name }}{% endif %}
+                                </p>
+                            </div>
+                            <span class="amount {% if txn.is_negative %}neg{% else %}pos{% endif %}">
+                                {% if txn.is_negative %}
+                                    -{{ currency_symbol }} {{ txn.amount_display|floatformat:2 }}
+                                {% else %}
+                                    {{ currency_symbol }} {{ txn.amount_display|floatformat:2 }}
+                                {% endif %}
+                            </span>
+                        </li>
+                        {% empty %}
+                        <li>
+                            <div>
+                                <p class="transaction-title">No transactions yet</p>
+                                <p class="transaction-meta">Add a transaction to start tracking.</p>
+                            </div>
+                            <span class="amount">--</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </article>
+
+            <article class="folder-card theme-sand" data-folder="limits">
+                <div class="folder-head">
+                    <div>
+                        <p class="folder-title">Monthly + Weekly Limits</p>
+                        <p class="folder-subtitle">Stay inside your comfort zone</p>
+                    </div>
+                    <button class="folder-action" type="button">Edit</button>
+                </div>
+                <div class="folder-body">
+                    <div class="limit-grid">
+                        <div class="limit-card">
+                            <p class="limit-title">Weekly Limit</p>
+                            <p class="limit-value">{{ currency_symbol }} {{ weekly_limit|floatformat:2 }}</p>
+                            <div class="limit-progress">
+                                <span style="width: {{ weekly_percent|floatformat:0 }}%;"></span>
+                            </div>
+                            <p class="limit-meta">
+                                {{ currency_symbol }} {{ weekly_spent|floatformat:2 }} spent ·
+                                {{ weekly_left_days }} days left
+                            </p>
+                        </div>
+                        <div class="limit-card">
+                            <p class="limit-title">Monthly Limit</p>
+                            <p class="limit-value">{{ currency_symbol }} {{ monthly_limit|floatformat:2 }}</p>
+                            <div class="limit-progress">
+                                <span style="width: {{ monthly_percent|floatformat:0 }}%;"></span>
+                            </div>
+                            <p class="limit-meta">
+                                {{ currency_symbol }} {{ monthly_spent|floatformat:2 }} spent ·
+                                {{ monthly_left_days }} days left
+                            </p>
+                        </div>
+                    </div>
+                    <div class="limit-actions">
+                        <button class="ghost-btn" type="button">Set new limit</button>
+                        <button class="primary-btn" type="button">Add expense</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="folder-card theme-cream" data-folder="analysis">
+                <div class="folder-head">
+                    <div>
+                        <p class="folder-title">Analysis + Purchase Goals</p>
+                        <p class="folder-subtitle">Track patterns and future wins</p>
+                    </div>
+                    <button class="folder-action" type="button">View report</button>
+                </div>
+                <div class="folder-body">
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <p class="analysis-label">Average Expenses (Weekly)</p>
+                            <div class="sparkline"></div>
+                            <div class="analysis-metrics">
+                                <p>{{ currency_symbol }} {{ week_expenses|floatformat:2 }}</p>
+                                <span class="metric-chip">Last 7 days</span>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <p class="analysis-label">This Month</p>
+                            <div class="analysis-row">
+                                <span>Total Earnings</span>
+                                <strong>{{ currency_symbol }} {{ month_earnings|floatformat:2 }}</strong>
+                            </div>
+                            <div class="analysis-row">
+                                <span>Total Expenses</span>
+                                <strong>{{ currency_symbol }} {{ month_expenses|floatformat:2 }}</strong>
+                            </div>
+                            <div class="analysis-row">
+                                <span>Savings Ratio</span>
+                                <strong>{{ savings_ratio|floatformat:0 }}%</strong>
+                            </div>
+                            <div class="ratio-bar">
+                                <span style="width: {{ savings_ratio|floatformat:0 }}%;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="goals-section">
+                        <div class="goals-header">
+                            <p class="goals-title">Purchase Goals</p>
+                            <button class="ghost-btn" type="button">Add goal</button>
+                        </div>
+                        <div class="goal-list">
+                            {% for goal in goals %}
+                            <div class="goal-item">
+                                <div class="goal-thumb {% if forloop.counter|divisibleby:2 %}sand{% else %}mint{% endif %}"></div>
+                                <div class="goal-info">
+                                    <p class="goal-name">{{ goal.description }}</p>
+                                    <p class="goal-meta">
+                                        {{ currency_symbol }} {{ goal.current_saved|floatformat:2 }} saved ·
+                                        {{ currency_symbol }} {{ goal.target_amount|floatformat:2 }} goal
+                                    </p>
+                                    <div class="goal-progress">
+                                        <span style="width: {{ goal.progress|floatformat:0 }}%;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="goal-item">
+                                <div class="goal-thumb mint"></div>
+                                <div class="goal-info">
+                                    <p class="goal-name">No goals yet</p>
+                                    <p class="goal-meta">Add a goal to track your next purchase.</p>
+                                    <div class="goal-progress">
+                                        <span style="width: 0%;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+
+<script>
+    const folderTabs = document.querySelectorAll(".folder-tab");
+    const folderCards = Array.from(document.querySelectorAll(".folder-card"));
+    const baseOrder = ["transactions", "limits", "analysis"];
+
+    const applyStackOrder = (activeId) => {
+        const order = [activeId, ...baseOrder.filter((id) => id !== activeId)];
+        order.forEach((id, index) => {
+            const card = folderCards.find((item) => item.dataset.folder === id);
+            if (card) {
+                card.style.setProperty("--stack-order", index);
+                card.classList.toggle("is-active", index === 0);
+            }
+        });
+    };
+
+    folderTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.folderTarget;
+            folderTabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+            applyStackOrder(target);
+        });
+    });
+
+    folderCards.forEach((card) => {
+        card.addEventListener("click", () => {
+            const target = card.dataset.folder;
+            const tab = Array.from(folderTabs).find((item) => item.dataset.folderTarget === target);
+            if (tab) {
+                tab.click();
+            }
+        });
+    });
+
+    applyStackOrder("transactions");
+</script>
+{% endblock %}
