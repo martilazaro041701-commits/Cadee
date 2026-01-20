@@ -1,0 +1,35 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="app-shell">
+    <header class="dashboard-header">
+        <div class="hello-block">
+            <p class="hello-eyebrow">Profile</p>
+            <h1>Edit your profile</h1>
+            <p class="hello-sub">Update your display name and picture.</p>
+        </div>
+        <a class="ghost-btn" href="{% url 'dashboard' %}">Back to dashboard</a>
+    </header>
+
+    <section class="form-card">
+        <form method="post" enctype="multipart/form-data" class="transaction-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <label class="form-field">
+                    <span>Name</span>
+                    {{ form.full_name }}
+                </label>
+                <label class="form-field">
+                    <span>Profile picture</span>
+                    {{ form.profile_image }}
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="ghost-btn" type="reset">Reset</button>
+                <button class="primary-btn" type="submit">Save changes</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

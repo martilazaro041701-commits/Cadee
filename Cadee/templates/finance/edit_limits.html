@@ -1,0 +1,35 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="app-shell">
+    <header class="dashboard-header">
+        <div class="hello-block">
+            <p class="hello-eyebrow">Limits</p>
+            <h1>Set your spending guardrails</h1>
+            <p class="hello-sub">Adjust weekly or monthly targets any time.</p>
+        </div>
+        <a class="ghost-btn" href="{% url 'dashboard' %}">Back to dashboard</a>
+    </header>
+
+    <section class="form-card">
+        <form method="post" class="transaction-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <label class="form-field">
+                    <span>Weekly limit</span>
+                    {{ form.weekly_limit }}
+                </label>
+                <label class="form-field">
+                    <span>Monthly limit</span>
+                    {{ form.monthly_limit }}
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="ghost-btn" type="reset">Reset</button>
+                <button class="primary-btn" type="submit">Save limits</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

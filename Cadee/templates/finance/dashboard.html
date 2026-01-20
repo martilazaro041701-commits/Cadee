@@ -1,5 +1,6 @@
 {% extends 'finance/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <div class="app-shell">
@@ -9,23 +10,33 @@
             <h1>Welcome back!</h1>
             <p class="hello-sub">Your folders are ready. Let’s keep today calm and clear.</p>
         </div>
-        <div class="profile-card">
-            <img src="{% static 'assets/cadee_corgi.png' %}" alt="Profile avatar" class="profile-avatar">
-            <div>
-                <p class="profile-name">{{ profile.full_name|default:request.user.username }}</p>
-                <p class="profile-status">Cadee Companion</p>
+        <div class="profile-menu">
+            <button class="profile-card" type="button" aria-haspopup="true" aria-expanded="false">
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" alt="Profile avatar" class="profile-avatar">
+                {% else %}
+                    <img src="{% static 'assets/cadee_corgi.svg' %}" alt="Profile avatar" class="profile-avatar">
+                {% endif %}
+                <div>
+                    <p class="profile-name">{{ profile.full_name|default:request.user.username }}</p>
+                    <p class="profile-status">Cadee Companion</p>
+                </div>
+            </button>
+            <div class="profile-dropdown" role="menu">
+                <a href="{% url 'edit_profile' %}" role="menuitem">Edit profile</a>
+                <a href="{% url 'logout' %}" role="menuitem">Log out</a>
             </div>
         </div>
     </header>
 
     <section class="quick-row">
-        <button class="mini-folder-btn" type="button">
+        <a class="mini-folder-btn" href="{% url 'add_transaction' %}">
             <span class="mini-folder-title">Any new transactions lately?</span>
             <span class="mini-folder-cta">Add here</span>
-        </button>
+        </a>
         <div class="total-savings-card">
             <p class="total-label">Total Savings</p>
-            <h2 class="total-amount">{{ currency_symbol }} {{ total_savings|floatformat:2 }}</h2>
+            <h2 class="total-amount">{{ currency_symbol }} {{ total_savings|floatformat:2|intcomma }}</h2>
             <p class="total-note">Updated today</p>
         </div>
     </section>
@@ -44,7 +55,7 @@
                         <p class="folder-title">Recent Transactions</p>
                         <p class="folder-subtitle">Last 5 entries</p>
                     </div>
-                    <button class="folder-action" type="button">See all</button>
+                    <a class="folder-action" href="{% url 'transaction_list' %}">See all</a>
                 </div>
                 <div class="folder-body">
                     <ul class="transaction-list">
@@ -59,9 +70,9 @@
                             </div>
                             <span class="amount {% if txn.is_negative %}neg{% else %}pos{% endif %}">
                                 {% if txn.is_negative %}
-                                    -{{ currency_symbol }} {{ txn.amount_display|floatformat:2 }}
+                                    -{{ currency_symbol }} {{ txn.amount_display|floatformat:2|intcomma }}
                                 {% else %}
-                                    {{ currency_symbol }} {{ txn.amount_display|floatformat:2 }}
+                                    {{ currency_symbol }} {{ txn.amount_display|floatformat:2|intcomma }}
                                 {% endif %}
                             </span>
                         </li>
@@ -84,36 +95,32 @@
                         <p class="folder-title">Monthly + Weekly Limits</p>
                         <p class="folder-subtitle">Stay inside your comfort zone</p>
                     </div>
-                    <button class="folder-action" type="button">Edit</button>
+                    <a class="folder-action" href="{% url 'edit_limits' %}">Edit</a>
                 </div>
                 <div class="folder-body">
                     <div class="limit-grid">
                         <div class="limit-card">
                             <p class="limit-title">Weekly Limit</p>
-                            <p class="limit-value">{{ currency_symbol }} {{ weekly_limit|floatformat:2 }}</p>
+                            <p class="limit-value">{{ currency_symbol }} {{ weekly_limit|floatformat:2|intcomma }}</p>
                             <div class="limit-progress">
                                 <span style="width: {{ weekly_percent|floatformat:0 }}%;"></span>
                             </div>
                             <p class="limit-meta">
-                                {{ currency_symbol }} {{ weekly_spent|floatformat:2 }} spent ·
+                                {{ currency_symbol }} {{ weekly_spent|floatformat:2|intcomma }} spent ·
                                 {{ weekly_left_days }} days left
                             </p>
                         </div>
                         <div class="limit-card">
                             <p class="limit-title">Monthly Limit</p>
-                            <p class="limit-value">{{ currency_symbol }} {{ monthly_limit|floatformat:2 }}</p>
+                            <p class="limit-value">{{ currency_symbol }} {{ monthly_limit|floatformat:2|intcomma }}</p>
                             <div class="limit-progress">
                                 <span style="width: {{ monthly_percent|floatformat:0 }}%;"></span>
                             </div>
                             <p class="limit-meta">
-                                {{ currency_symbol }} {{ monthly_spent|floatformat:2 }} spent ·
+                                {{ currency_symbol }} {{ monthly_spent|floatformat:2|intcomma }} spent ·
                                 {{ monthly_left_days }} days left
                             </p>
                         </div>
-                    </div>
-                    <div class="limit-actions">
-                        <button class="ghost-btn" type="button">Set new limit</button>
-                        <button class="primary-btn" type="button">Add expense</button>
                     </div>
                 </div>
             </article>
@@ -132,7 +139,7 @@
                             <p class="analysis-label">Average Expenses (Weekly)</p>
                             <div class="sparkline"></div>
                             <div class="analysis-metrics">
-                                <p>{{ currency_symbol }} {{ week_expenses|floatformat:2 }}</p>
+                                <p>{{ currency_symbol }} {{ week_expenses|floatformat:2|intcomma }}</p>
                                 <span class="metric-chip">Last 7 days</span>
                             </div>
                         </div>
@@ -140,11 +147,11 @@
                             <p class="analysis-label">This Month</p>
                             <div class="analysis-row">
                                 <span>Total Earnings</span>
-                                <strong>{{ currency_symbol }} {{ month_earnings|floatformat:2 }}</strong>
+                                <strong>{{ currency_symbol }} {{ month_earnings|floatformat:2|intcomma }}</strong>
                             </div>
                             <div class="analysis-row">
                                 <span>Total Expenses</span>
-                                <strong>{{ currency_symbol }} {{ month_expenses|floatformat:2 }}</strong>
+                                <strong>{{ currency_symbol }} {{ month_expenses|floatformat:2|intcomma }}</strong>
                             </div>
                             <div class="analysis-row">
                                 <span>Savings Ratio</span>
@@ -159,7 +166,7 @@
                     <div class="goals-section">
                         <div class="goals-header">
                             <p class="goals-title">Purchase Goals</p>
-                            <button class="ghost-btn" type="button">Add goal</button>
+                            <a class="ghost-btn" href="{% url 'add_goal' %}">Add goal</a>
                         </div>
                         <div class="goal-list">
                             {% for goal in goals %}
@@ -168,13 +175,14 @@
                                 <div class="goal-info">
                                     <p class="goal-name">{{ goal.description }}</p>
                                     <p class="goal-meta">
-                                        {{ currency_symbol }} {{ goal.current_saved|floatformat:2 }} saved ·
-                                        {{ currency_symbol }} {{ goal.target_amount|floatformat:2 }} goal
+                                        {{ currency_symbol }} {{ goal.current_saved|floatformat:2|intcomma }} saved ·
+                                        {{ currency_symbol }} {{ goal.target_amount|floatformat:2|intcomma }} goal
                                     </p>
                                     <div class="goal-progress">
                                         <span style="width: {{ goal.progress|floatformat:0 }}%;"></span>
                                     </div>
                                 </div>
+                                <a class="ghost-btn goal-update" href="{% url 'update_goal' goal.id %}">Update</a>
                             </div>
                             {% empty %}
                             <div class="goal-item">

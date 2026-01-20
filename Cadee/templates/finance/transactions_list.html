@@ -1,0 +1,50 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="app-shell">
+    <header class="dashboard-header">
+        <div class="hello-block">
+            <p class="hello-eyebrow">Transaction History</p>
+            <h1>All entries</h1>
+            <p class="hello-sub">Newest first, full detail view.</p>
+        </div>
+        <div class="header-actions">
+            <a class="ghost-btn" href="{% url 'dashboard' %}">Back to dashboard</a>
+            <a class="primary-btn" href="{% url 'add_transaction' %}">Add transaction</a>
+        </div>
+    </header>
+
+    <section class="list-card">
+        <ul class="transaction-list full-list">
+            {% for txn in transactions %}
+            <li>
+                <div>
+                    <p class="transaction-title">{{ txn.description }}</p>
+                    <p class="transaction-meta">
+                        {{ txn.date|date:"M d, Y" }}
+                        {% if txn.folder %}· {{ txn.folder.name }}{% endif %}
+                    </p>
+                </div>
+                <span class="amount {% if txn.is_negative %}neg{% else %}pos{% endif %}">
+                    {% if txn.is_negative %}
+                        -{{ currency_symbol }} {{ txn.amount_display|floatformat:2|intcomma }}
+                    {% else %}
+                        {{ currency_symbol }} {{ txn.amount_display|floatformat:2|intcomma }}
+                    {% endif %}
+                </span>
+            </li>
+            {% empty %}
+            <li>
+                <div>
+                    <p class="transaction-title">No transactions yet</p>
+                    <p class="transaction-meta">Add a transaction to start tracking.</p>
+                </div>
+                <span class="amount">--</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

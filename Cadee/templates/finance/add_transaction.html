@@ -1,0 +1,45 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="app-shell">
+    <header class="dashboard-header">
+        <div class="hello-block">
+            <p class="hello-eyebrow">Add Transaction</p>
+            <h1>Log something new</h1>
+            <p class="hello-sub">Positive for income, negative for expenses.</p>
+        </div>
+        <a class="ghost-btn" href="{% url 'dashboard' %}">Back to dashboard</a>
+    </header>
+
+    <section class="form-card">
+        <form method="post" class="transaction-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <label class="form-field">
+                    <span>Folder</span>
+                    {{ form.folder }}
+                </label>
+                <label class="form-field">
+                    <span>Description</span>
+                    {{ form.description }}
+                </label>
+                <label class="form-field">
+                    <span>Amount</span>
+                    {{ form.amount }}
+                    <small>Example: -5500.00</small>
+                </label>
+                <label class="form-field">
+                    <span>Date</span>
+                    {{ form.date }}
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="ghost-btn" type="reset">Clear</button>
+                <button class="primary-btn" type="submit">Save transaction</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

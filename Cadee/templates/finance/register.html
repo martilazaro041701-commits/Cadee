@@ -1,0 +1,38 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="login-shell">
+    <div class="login-card">
+        <div class="login-glow"></div>
+        <div class="login-logo">
+            <img src="{% static 'assets/cadee_logo.png' %}" alt="Cadee logo">
+        </div>
+        <h1>Create account</h1>
+        <p class="login-tagline">Bark less. Save more</p>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <label class="auth-field">
+                <span>Username</span>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </label>
+            <label class="auth-field">
+                <span>Password</span>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </label>
+            <label class="auth-field">
+                <span>Confirm password</span>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </label>
+            <button class="primary-btn" type="submit">Register</button>
+        </form>
+        <p class="auth-switch">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

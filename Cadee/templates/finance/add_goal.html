@@ -1,0 +1,51 @@
+{% extends 'finance/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="app-shell">
+    <header class="dashboard-header">
+        <div class="hello-block">
+            <p class="hello-eyebrow">Purchase Goals</p>
+            <h1>Add a new goal</h1>
+            <p class="hello-sub">Track the things you want and stay motivated.</p>
+        </div>
+        <a class="ghost-btn" href="{% url 'dashboard' %}">Back to dashboard</a>
+    </header>
+
+    <section class="form-card">
+        <form method="post" enctype="multipart/form-data" class="transaction-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <label class="form-field">
+                    <span>Goal description</span>
+                    {{ form.description }}
+                </label>
+                <label class="form-field">
+                    <span>Target amount</span>
+                    {{ form.target_amount }}
+                </label>
+                <label class="form-field">
+                    <span>Current saved</span>
+                    {{ form.current_saved }}
+                </label>
+                <label class="form-field">
+                    <span>Goal image</span>
+                    {{ form.image }}
+                </label>
+                <label class="form-field">
+                    <span>Status</span>
+                    {{ form.status }}
+                </label>
+                <label class="form-field">
+                    <span>Deadline</span>
+                    {{ form.deadline }}
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="ghost-btn" type="reset">Reset</button>
+                <button class="primary-btn" type="submit">Save goal</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
