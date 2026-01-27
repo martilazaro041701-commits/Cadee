@@ -125,6 +125,7 @@ def dashboard(request):
                     "target_amount": target,
                     "deadline": goal.deadline,
                     "status": goal.status,
+                    "status_label": goal.get_status_display(),
                     "image": goal.image,
                     "progress": min(Decimal("100.0"), progress),
                 }
@@ -250,6 +251,16 @@ def update_goal(request, goal_id):
         "finance/update_goal.html",
         {"form": form, "goal": goal},
     )
+
+
+@login_required
+def delete_goal(request, goal_id):
+    goal = PurchaseGoal.objects.filter(user=request.user, id=goal_id).first()
+    if goal is None:
+        return redirect("dashboard")
+    if request.method == "POST":
+        goal.delete()
+    return redirect("dashboard")
 
 
 @login_required

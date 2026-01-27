@@ -30,6 +30,7 @@ urlpatterns = [
     path('limits/edit/', views.edit_limits, name='edit_limits'),
     path('goals/new/', views.add_goal, name='add_goal'),
     path('goals/<int:goal_id>/update/', views.update_goal, name='update_goal'),
+    path('goals/<int:goal_id>/delete/', views.delete_goal, name='delete_goal'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('logout/', views.logout_view, name='logout'),
 ]

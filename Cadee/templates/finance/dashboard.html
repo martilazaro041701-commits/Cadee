@@ -171,8 +171,13 @@
                         <div class="goal-list">
                             {% for goal in goals %}
                             <div class="goal-item">
-                                <div class="goal-thumb {% if forloop.counter|divisibleby:2 %}sand{% else %}mint{% endif %}"></div>
+                                <div class="goal-thumb {% if forloop.counter|divisibleby:2 %}sand{% else %}mint{% endif %}">
+                                    {% if goal.image %}
+                                        <img src="{{ goal.image.url }}" alt="{{ goal.description }}">
+                                    {% endif %}
+                                </div>
                                 <div class="goal-info">
+                                    <span class="goal-badge status-{{ goal.status|lower }}">{{ goal.status_label }}</span>
                                     <p class="goal-name">{{ goal.description }}</p>
                                     <p class="goal-meta">
                                         {{ currency_symbol }} {{ goal.current_saved|floatformat:2|intcomma }} saved ·
@@ -183,6 +188,10 @@
                                     </div>
                                 </div>
                                 <a class="ghost-btn goal-update" href="{% url 'update_goal' goal.id %}">Update</a>
+                                <form method="post" action="{% url 'delete_goal' goal.id %}" class="goal-delete">
+                                    {% csrf_token %}
+                                    <button class="ghost-btn danger-btn" type="submit">Remove</button>
+                                </form>
                             </div>
                             {% empty %}
                             <div class="goal-item">
