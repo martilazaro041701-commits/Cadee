@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import BudgetLimit, PurchaseGoal, Transaction, UserProfile
 
 
+# Creating Transactions
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
@@ -19,13 +20,13 @@ class TransactionForm(forms.ModelForm):
         if user is not None:
             self.fields["folder"].queryset = self.fields["folder"].queryset.filter(user=user)
 
-
+#Weekly and Monthly Budget limit setter
 class BudgetLimitForm(forms.ModelForm):
     class Meta:
         model = BudgetLimit
         fields = ["weekly_limit", "monthly_limit"]
 
-
+#Creating "Save Goals"
 class PurchaseGoalForm(forms.ModelForm):
     class Meta:
         model = PurchaseGoal
@@ -34,19 +35,19 @@ class PurchaseGoalForm(forms.ModelForm):
             "deadline": forms.DateInput(attrs={"type": "date"}),
         }
 
-
+#Updating Save Goal Forms
 class PurchaseGoalUpdateForm(forms.ModelForm):
     class Meta:
         model = PurchaseGoal
         fields = ["current_saved", "status"]
 
-
+#User Profile
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ["full_name", "profile_image"]
 
-
+#Login From 
 class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -57,7 +58,7 @@ class LoginForm(AuthenticationForm):
             {"class": "auth-input", "placeholder": "Password"}
         )
 
-
+#Register New User
 class RegisterForm(UserCreationForm):
     class Meta:
         model = get_user_model()

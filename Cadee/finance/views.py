@@ -21,6 +21,7 @@ from .forms import (
     TransactionForm,
 )
 
+#Purchase History Transaction Logic 
 def _build_transaction_items(transactions):
     items = []
     for txn in transactions:
